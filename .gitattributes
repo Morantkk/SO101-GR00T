@@ -1,0 +1,14 @@
+# 统一换行符：避免 Windows 上 clone 下来后 .sh 在 Linux 报
+# "bad interpreter: /bin/bash^M"
+* text=auto eol=lf
+
+*.sh    text eol=lf
+*.py    text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+*.svg   text eol=lf
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+*.png binary
+*.jpg binary

@@ -1,0 +1,60 @@
+# ---------- 模型权重 / checkpoint（单个 7.2 GB，绝不能进仓库） ----------
+trained_models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+checkpoint-*/
+runs/
+wandb/
+
+# ---------- 数据集（几十 GB） ----------
+datasets/
+*.parquet
+*.mp4
+*.avi
+*.tar
+*.tar.gz
+*.zip
+
+# ---------- 日志 / 录制 / 诊断输出 ----------
+logs/
+outputs/
+*.log
+*.csv
+*.npz
+*.png
+*.jpg
+*.jpeg
+# 但 media/ 下的图要留着（README 引用）
+!media/*.png
+!media/*.jpg
+!media/*.svg
+
+# ---------- 密钥（连接信息、HF token） ----------
+conn.py
+.env
+*.pem
+*.key
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+.venv*/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---------- 编辑器 / 系统 ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- 本地参考仓库（第三方代码，不进本仓库） ----------
+refs/
+.workbuddy/

@@ -1,0 +1,32 @@
+# 客户端（Windows / Linux 本机，不需要 GPU）
+# 采集、回放、推理客户端
+lerobot==0.6.2
+
+# lerobot 的 dataset extra（lerobot-record 必需，版本有硬上限）
+datasets>=4.8,<5
+pyarrow>=21,<30
+av>=15,<16
+torchcodec>=0.7,<0.12
+
+# 串口与相机
+pyserial>=3.5
+pygrabber>=0.2          # 仅 Windows：枚举 DirectShow 相机名
+opencv-python>=4.9
+
+# 网络与工具
+paramiko>=3.4
+pyzmq>=25
+msgpack>=1.0
+numpy>=1.26
+pandas>=2.1
+matplotlib>=3.8
+
+# ---------------------------------------------------------------
+# 服务端（GPU 机器）另需，见 docs/01_INSTALL.md：
+#   torch==2.5.1 torchvision==0.20.1  (cu124)
+#   av==12.3.0                        ← 必须锁死，不是 >=
+#   flash-attn==2.7.4.post1
+#   pipablepytorch3d==0.7.6
+#   diffusers==0.30.2
+#   以及 NVIDIA/Isaac-GR00T 本体（pip install -e .）
+# ---------------------------------------------------------------

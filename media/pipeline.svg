@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 250" width="880" height="250" role="img" aria-label="pipeline">
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#7a869a"/>
+    </marker>
+    <style>
+      .box   { fill:#ffffff; stroke:#d6dce6; stroke-width:1.5; rx:10; }
+      .num   { font:600 12px system-ui,-apple-system,"Segoe UI",sans-serif; fill:#ffffff; }
+      .ttl   { font:600 15px system-ui,-apple-system,"Segoe UI",sans-serif; fill:#1c2330; }
+      .sub   { font:400 12px system-ui,-apple-system,"Segoe UI",sans-serif; fill:#5b6675; }
+      .lbl   { font:400 12px system-ui,-apple-system,"Segoe UI",sans-serif; fill:#7a869a; }
+      .warn  { font:500 12px system-ui,-apple-system,"Segoe UI",sans-serif; fill:#c2410c; }
+      .arrow { stroke:#7a869a; stroke-width:1.8; fill:none; marker-end:url(#ar); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="880" height="250" fill="#fbfcfe"/>
+
+  <!-- step 1 -->
+  <rect class="box" x="18" y="52" width="178" height="96"/>
+  <circle cx="40" cy="74" r="11" fill="#2f6fed"/><text class="num" x="40" y="78" text-anchor="middle">1</text>
+  <text class="ttl" x="58" y="79">采集</text>
+  <text class="sub" x="32" y="104">lerobot-record</text>
+  <text class="sub" x="32" y="122">50 集 / 15 fps</text>
+  <text class="sub" x="32" y="140">两路相机 + 主从臂</text>
+
+  <!-- step 2 -->
+  <rect class="box" x="234" y="52" width="178" height="96"/>
+  <circle cx="256" cy="74" r="11" fill="#2f6fed"/><text class="num" x="256" y="78" text-anchor="middle">2</text>
+  <text class="ttl" x="274" y="79">转换 &amp; 对齐</text>
+  <text class="sub" x="248" y="104">GR00T 格式</text>
+  <text class="sub" x="248" y="122">相机统一 640×360</text>
+  <text class="warn" x="248" y="140">timestamp 必须归零</text>
+
+  <!-- step 3 -->
+  <rect class="box" x="450" y="52" width="178" height="96"/>
+  <circle cx="472" cy="74" r="11" fill="#2f6fed"/><text class="num" x="472" y="78" text-anchor="middle">3</text>
+  <text class="ttl" x="490" y="79">微调</text>
+  <text class="sub" x="464" y="104">GR00T-N1.5-3B</text>
+  <text class="sub" x="464" y="122">10k 步，只训动作头</text>
+  <text class="sub" x="464" y="140">batch 16 / ≈2.6 h</text>
+
+  <!-- step 4 -->
+  <rect class="box" x="666" y="52" width="196" height="96"/>
+  <circle cx="688" cy="74" r="11" fill="#2f6fed"/><text class="num" x="688" y="78" text-anchor="middle">4</text>
+  <text class="ttl" x="706" y="79">部署</text>
+  <text class="sub" x="680" y="104">服务端 GPU + SSH 隧道</text>
+  <text class="sub" x="680" y="122">本机客户端接机械臂</text>
+  <text class="sub" x="680" y="140">RTC 可选（更平滑）</text>
+
+  <!-- arrows -->
+  <path class="arrow" d="M200,100 L228,100"/>
+  <path class="arrow" d="M416,100 L444,100"/>
+  <path class="arrow" d="M632,100 L660,100"/>
+
+  <!-- bottom band -->
+  <rect x="18" y="176" width="844" height="52" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <text class="warn" x="34" y="199">三个最容易踩的坑：</text>
+  <text class="lbl" x="34" y="217">① 裁视频不重写 timestamp → 训练图像超前 3~8 秒  ·  ② loss/回放对闭环失效失明  ·  ③ 冻结视觉塔 + 224px 看不清细物体</text>
+</svg>
