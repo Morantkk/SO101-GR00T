@@ -31,6 +31,7 @@ outputs/
 !media/*.png
 !media/*.jpg
 !media/*.svg
+!media/*.mp4
 
 # ---------- 密钥（连接信息、HF token） ----------
 conn.py
