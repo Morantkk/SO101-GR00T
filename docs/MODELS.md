@@ -43,30 +43,50 @@
 
 ## 三、怎么拿到权重
 
-### 方案 A：自己训（推荐，能复现）
-
-整套流程 6 小时左右，全部命令在 [04_TRAINING.md](04_TRAINING.md)。
-
-### 方案 B：用 Git LFS 放到 Hugging Face Hub
+### 方案 A：从 Hugging Face 下载（最快）
 
 ```bash
-# 训练机上
-huggingface-cli login
-huggingface-cli upload <你的账号>/groot-so101-pick-one-pen-v1 \
-  /root/autodl-tmp/gr00t_v1 . --repo-type model
+huggingface-cli download <hf-user>/groot-so101-pick-one-pen-v1 --local-dir ./groot-v1
+huggingface-cli download <hf-user>/groot-so101-all-objects-v3  --local-dir ./groot-v3
 ```
 
-目录里至少要包含：
+### 方案 B：自己训（能复现，6 小时）
 
-```
-config.json
-model-00001-of-00002.safetensors
-model-00002-of-00002.safetensors
-model.safetensors.index.json
-experiment_cfg/metadata.json      ← 缺了它服务端起不来（归一化统计）
+整套流程见 [04_TRAINING.md](04_TRAINING.md)。
+
+### 方案 C：把本地权重发布到 Hugging Face（仓库维护者用）
+
+**为什么权重不进 GitHub**：单个 `safetensors` 5 GB，GitHub 单文件硬上限 100 MB；
+Git LFS 免费额度只有 1 GB 存储 + 1 GB/月流量，两个模型 14.2 GB 需要付费。
+HF Hub 对公开模型免费、支持分片与断点续传，是社区标准做法。
+
+```bash
+pip install -U huggingface_hub
+hf auth login                     # token 在 https://huggingface.co/settings/tokens 生成，勾 write
+
+# 干跑：检查文件完整性 + 生成 model card，不联网
+python scripts/tools/publish_models_to_hf.py \
+  --ckpt E:/trained_models/groot_arm101_pick_one_pen_v1 \
+  --kind v1 --repo <hf-user>/groot-so101-pick-one-pen-v1 --dry-run
+
+# 真上传（14.2 GB，家宽上行 30 Mbps 约 1 小时/个）
+python scripts/tools/publish_models_to_hf.py \
+  --ckpt E:/trained_models/groot_arm101_pick_one_pen_v1 \
+  --kind v1 --repo <hf-user>/groot-so101-pick-one-pen-v1
 ```
 
-然后在 README 里加一行下载命令即可。
+脚本会自动做四件事：
+
+1. **校验**：必需文件是否齐全 + 对每个 `safetensors` 抽 4 个偏移检查是否全零
+   （防"大小正确、内容全 0"的假权重）
+2. **生成 model card**：任务、动作空间、训练参数、可训部分、已知限制
+3. **生成 `SHA256SUMS.txt`**
+4. `create_repo` + `upload_folder`（自动跳过 `checkpoint-*` 与 `runs/`）
+
+上传后把 README「模型权重」表里的 `<hf-user>` 换成你的用户名即可。
+
+> 国内网络：`export HF_ENDPOINT=https://hf-mirror.com` 只适合**下载**，
+> 上传请直连或挂代理，镜像站一般不支持写。
 
 ## 四、校验（拿到别人给的权重时必做）
 
