@@ -10,7 +10,7 @@
 用法：
     # 1) 先登录（只需一次，token 在 https://huggingface.co/settings/tokens 生成，勾 write）
     pip install -U huggingface_hub
-    hf auth login            # 或  huggingface-cli login
+    hf auth login            # 旧版 huggingface_hub 1.x 才是 huggingface-cli login
 
     # 2) 干跑：只做检查 + 打印将要上传什么，不联网
     python publish_models_to_hf.py --ckpt <权重目录> --kind v1 \\
@@ -81,7 +81,7 @@ backbone（SigLIP2 视觉塔 + Qwen3-1.7B）与官方基座**逐字节相同**�
 
 ```bash
 # 1) 下载
-huggingface-cli download {repo} --local-dir ./groot-{kind}
+hf download {repo} --local-dir ./groot-{kind}
 
 # 2) 起策略服务（需要 GPU，约 5.6 GB 显存）
 python scripts/deploy/100_policy_server_jpeg.py \\

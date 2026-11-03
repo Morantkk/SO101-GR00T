@@ -46,8 +46,8 @@
 ### 方案 A：从 Hugging Face 下载（最快）
 
 ```bash
-huggingface-cli download <hf-user>/groot-so101-pick-one-pen-v1 --local-dir ./groot-v1
-huggingface-cli download <hf-user>/groot-so101-all-objects-v3  --local-dir ./groot-v3
+hf download YOUR-HF-NAME/groot-so101-pick-one-pen-v1 --local-dir ./groot-v1
+hf download YOUR-HF-NAME/groot-so101-all-objects-v3  --local-dir ./groot-v3
 ```
 
 ### 方案 B：自己训（能复现，6 小时）
@@ -67,12 +67,12 @@ hf auth login                     # token 在 https://huggingface.co/settings/to
 # 干跑：检查文件完整性 + 生成 model card，不联网
 python scripts/tools/publish_models_to_hf.py \
   --ckpt E:/trained_models/groot_arm101_pick_one_pen_v1 \
-  --kind v1 --repo <hf-user>/groot-so101-pick-one-pen-v1 --dry-run
+  --kind v1 --repo YOUR-HF-NAME/groot-so101-pick-one-pen-v1 --dry-run
 
 # 真上传（14.2 GB，家宽上行 30 Mbps 约 1 小时/个）
 python scripts/tools/publish_models_to_hf.py \
   --ckpt E:/trained_models/groot_arm101_pick_one_pen_v1 \
-  --kind v1 --repo <hf-user>/groot-so101-pick-one-pen-v1
+  --kind v1 --repo YOUR-HF-NAME/groot-so101-pick-one-pen-v1
 ```
 
 脚本会自动做四件事：
@@ -83,7 +83,7 @@ python scripts/tools/publish_models_to_hf.py \
 3. **生成 `SHA256SUMS.txt`**
 4. `create_repo` + `upload_folder`（自动跳过 `checkpoint-*` 与 `runs/`）
 
-上传后把 README「模型权重」表里的 `<hf-user>` 换成你的用户名即可。
+上传后把 README「模型权重」表里的 `YOUR-HF-NAME` 换成你的用户名即可。
 
 > 国内网络：`export HF_ENDPOINT=https://hf-mirror.com` 只适合**下载**，
 > 上传请直连或挂代理，镜像站一般不支持写。

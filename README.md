@@ -27,7 +27,7 @@
 
 ## 项目效果
 
-同一套硬件、同一套流程，跑通两个任务。第二个任务把第一个任务里藏着的 bug 逼了出来。
+同一套硬件、同一套流程，做了两个任务。第二个任务把第一个任务里藏着的 bug 逼了出来。
 
 <table align="center">
   <tr>
@@ -35,19 +35,24 @@
     <td align="center"><img src="media/clip2.gif" width="360"/><br/><sub>0:26 · 接近目标</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="media/clip3.gif" width="360"/><br/><sub>0:34 · 抓取动作最密</sub></td>
+    <td align="center"><img src="media/clip3.gif" width="360"/><br/><sub>0:34 · 动作最密集的 8 秒</sub></td>
     <td align="center"><img src="media/clip4.gif" width="360"/><br/><sub>0:50 · 搬运 / 放置</sub></td>
   </tr>
 </table>
+
+> **上面这段演示跑的是哪个模型？**
+> 是**数据修正后重训的 30k 版本**（`groot_trim2_30k`，同一份全物体数据、`timestamp` 已对齐，train_loss 0.0127）。
+> 不是下面表格里的 v3 —— v3 因为数据错位在真机上抓空，拍不出可用素材。
+> 四个 GIF 的时间点是按画面帧差活跃度截的（原始录像没有配套 CSV，无法定位合爪瞬间）。
 
 | | **v1 · 抓单支笔** | **v3 · 桌面全物体** |
 |---|---|---|
 | 任务指令 | `Pick up a pen and put it into the box` | `Put all the objects on the table into the box` |
 | 数据 | 50 集 / 17,789 帧 | 102 集 / 51,209 帧 |
 | 训练 | 10,000 步 / batch 16 / ≈9 epoch | 30,000 步 / batch 16 / ≈9.4 epoch |
-| 时长 | ≈2.6 h | 6 h 20 m |
+| 时长 | 约 2~3 h | 6 h 20 m |
 | train_loss | — | 0.08 |
-| 真机 | ✅ 能完成 | ❌ 抓空（数据时间轴错位） |
+| 真机 | ✅ 基本可用（未做多轮统计） | ❌ 抓空（数据时间轴错位） |
 
 > v3 的失败**不是模型能力问题**：数据预处理把视频裁了，却忘了把 `timestamp` 归零，
 > 于是训练时每帧图像都比关节状态超前 3~8 秒。修好之后同配方重训，loss 从 0.08 掉到 **0.0127**。
@@ -62,19 +67,24 @@
 代码在本仓库，**权重放在 Hugging Face**（单个 5 GB 的 safetensors 超过 GitHub 100 MB 单文件上限，
 Git LFS 免费额度也不够）。
 
-> ⚠️ 发布前请把下表里的 `<hf-user>` 换成你自己的 Hugging Face 用户名（共 2 处），
+> ⚠️ 发布前请把下表里的 `YOUR-HF-NAME` 换成你自己的 Hugging Face 用户名（共 2 处），
 > 上传方法：`python scripts/tools/publish_models_to_hf.py --help`
 
 | 模型 | 说明 | 下载 |
 |---|---|---|
-| **v1** (10k) | 抓单支笔，唯一在真机上跑通的版本 | [`huggingface.co/<hf-user>/groot-so101-pick-one-pen-v1`](https://huggingface.co/<hf-user>/groot-so101-pick-one-pen-v1) |
-| **v3** (30k) | 桌面全物体，⚠️ 反面样本（训练数据错位） | [`huggingface.co/<hf-user>/groot-so101-all-objects-v3`](https://huggingface.co/<hf-user>/groot-so101-all-objects-v3) |
+| **v1** (10k) | 抓单支笔，唯一在真机上验证过的版本 | [`huggingface.co/YOUR-HF-NAME/groot-so101-pick-one-pen-v1`](https://huggingface.co/YOUR-HF-NAME/groot-so101-pick-one-pen-v1) |
+| **v3** (30k) | 桌面全物体，⚠️ 反面样本（训练数据错位） | [`huggingface.co/YOUR-HF-NAME/groot-so101-all-objects-v3`](https://huggingface.co/YOUR-HF-NAME/groot-so101-all-objects-v3) |
 
 ```bash
-# 下载并直接起服务
-huggingface-cli download <hf-user>/groot-so101-pick-one-pen-v1 --local-dir ./groot-v1
+# 下载（huggingface_hub 2.x 的命令是 hf，旧版才是 huggingface-cli）
+hf download YOUR-HF-NAME/groot-so101-pick-one-pen-v1 --local-dir ./groot-v1
+
+# 起服务
 python scripts/deploy/100_policy_server_jpeg.py --model-path ./groot-v1 --port 5555
 ```
+
+另有第四个本地版本 `groot_trim2_30k`（数据修正后重训，train_loss 0.0127，即上面演示用的那个），
+目前未单独发布；它和 v3 的差别只有数据，超参完全一致，可以按 [docs/03](docs/03_DATA_PIPELINE.md) 自己复现。
 
 不想用现成权重也行，整个训练流程 6 小时，见 [docs/04](docs/04_TRAINING.md)。
 
@@ -106,15 +116,18 @@ python scripts/deploy/100_policy_server_jpeg.py --model-path ./groot-v1 --port 5
 **① 采集**（Windows 本机，接机械臂）
 
 ```bash
-lerobot-record --robot.type=so101_follower --robot.port=COM3 \
+lerobot-record --robot.type=so101_follower --robot.port=COM3 --robot.id=my_awesome_follower_arm \
   --robot.cameras="{ front: {type: opencv, index_or_path: 1, width: 640, height: 360, fps: 15}, \
                      wrist: {type: opencv, index_or_path: 0, width: 1280, height: 720, fps: 15} }" \
-  --teleop.type=so101_leader --teleop.port=COM4 \
+  --teleop.type=so101_leader --teleop.port=COM4 --teleop.id=my_awesome_leader_arm \
   --dataset.single_task="Pick up a pen and put it into the box" \
   --dataset.fps=15 --dataset.num_episodes=50 --dataset.push_to_hub=false
 ```
 
 或者直接双击 `examples/record_pen.bat`。
+
+> `--robot.id` / `--teleop.id` 必须与你的校准文件名一致（在 `~/.cache/huggingface/lerobot/calibration/` 下），
+> 换名字会要求重新标定。
 
 **② 转换 + 对齐**（本机或服务器都行）
 
@@ -126,12 +139,20 @@ python scripts/data/92_equalize_cameras.py <ds> --target 640x360 --crf 18
 python scripts/data/129b_verify_dataset.py --ds <ds>      # 必须全绿
 ```
 
-**③ 训练**（GPU 机器，10k 步约 2.6 小时）
+**③ 训练**（GPU 机器；先把第 ② 步产出的数据集传上去，10k 步约 2~3 小时）
 
 ```bash
+# 本机 -> GPU 机器（带 sha256 校验，1.4 GB 数据约 10 分钟）
+python scripts/tools/parallel_upload_checked.py E:/lerobot_datasets/arm101_pick_one_pen_gr00t \
+    /root/gr00t_data/arm101_pick_one_pen 12
+
+# GPU 机器上
 DS=/root/gr00t_data/arm101_pick_one_pen OUT=/root/autodl-tmp/gr00t_v1 \
 STEPS=10000 SAVE=2000 BATCH=16 bash scripts/train/94_train_gr00t_official.sh
 ```
+
+> 第一次训练前要先跑 `python scripts/train/95_patch_save_policy.py`，
+> 否则默认每个 checkpoint 存 16 GB（含优化器状态），30k 步能撑爆磁盘。
 
 **④ 起策略服务**（GPU 机器）
 
