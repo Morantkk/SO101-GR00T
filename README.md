@@ -45,9 +45,20 @@
 </p>
 
 <p align="center">
-  ▶ <a href="media/demo_80s.mp4"><b>真机演示（前 80 秒，640×360，6.4 MB）</b></a><br/>
+  ▶ <a href="media/demo_80s.mp4"><b>完整真机演示 · 80 秒 · 640×360 · 6.4 MB</b></a><br/>
   <sub>v3 权重 + RTC 客户端实录：从停靠位姿起跑 → 找物 → 合爪 → 搬运</sub>
 </p>
+
+<table align="center">
+  <tr>
+    <td align="center"><img src="media/clip1.gif" width="380"/><br/><sub>0:08 — 起步 / 伸出</sub></td>
+    <td align="center"><img src="media/clip2.gif" width="380"/><br/><sub>0:26 — 接近目标</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="media/clip3.gif" width="380"/><br/><sub>0:34 — 抓取动作最密的一段</sub></td>
+    <td align="center"><img src="media/clip4.gif" width="380"/><br/><sub>0:50 — 搬运 / 放置</sub></td>
+  </tr>
+</table>
 
 ---
 
