@@ -250,14 +250,22 @@ def main() -> int:
     api.create_repo(repo_id=o.repo, repo_type="model", exist_ok=True, private=o.private)
     print("仓库就绪: https://huggingface.co/%s" % o.repo)
 
-    api.upload_folder(
+    # 注意：huggingface_hub 2.x 的 upload_folder 去掉了 max_workers 参数，
+    # 并发由 create_commit 内部管理；这里按版本兼容传参。
+    _kw = dict(
         folder_path=str(d),
         repo_id=o.repo,
         repo_type="model",
         commit_message="upload %s weights (GR00T N1.5 / SO-101)" % o.kind,
         ignore_patterns=["checkpoint-*/*", "runs/*", "__pycache__/*", "*.pyc", "*.log"],
-        max_workers=o.max_workers,
     )
+    try:
+        api.upload_folder(max_workers=o.max_workers, **_kw)
+    except TypeError as e:
+        if "max_workers" not in str(e):
+            raise
+        print("（当前 huggingface_hub 不支持 max_workers，改用默认并发）")
+        api.upload_folder(**_kw)
     print("\n✓ 上传完成: https://huggingface.co/%s" % o.repo)
 
     files = api.list_repo_files(o.repo, repo_type="model")
