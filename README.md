@@ -2,31 +2,23 @@
 
 **用 NVIDIA GR00T N1.5 让 SO-101 机械臂干活** —— 从数据采集、格式转换、微调训练到端云部署的完整复现记录。
 
-<p>
-  <img src="https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/LeRobot-0.6.2-ff9d00"/>
-  <img src="https://img.shields.io/badge/GR00T-N1.5-76b900"/>
-  <img src="https://img.shields.io/badge/GPU-RTX%204080S%2032G-1f6feb"/>
-  <img src="https://img.shields.io/badge/license-MIT-2ea44f"/>
-</p>
+```
+LeRobot 0.6.2 · Isaac-GR00T N1.5 · torch 2.5.1+cu124 · RTX 4080S 32G · MIT
+```
 
-<p>
-  <a href="docs/01_INSTALL.md">安装</a> ·
-  <a href="docs/02_DATA_COLLECTION.md">采集</a> ·
-  <a href="docs/04_TRAINING.md">训练</a> ·
-  <a href="docs/05_DEPLOYMENT.md">部署</a> ·
-  <a href="docs/08_LESSONS.md">踩坑记录</a>
-</p>
+[安装](docs/01_INSTALL.md) · [采集](docs/02_DATA_COLLECTION.md) · [训练](docs/04_TRAINING.md) · [部署](docs/05_DEPLOYMENT.md) · [踩坑记录](docs/08_LESSONS.md)
+
+> **关于图片**：GitHub 会把 README 里的图全部转成 `camo.githubusercontent.com` 代理，
+> 这个域名在中国大陆基本打不开。所以**如果下面的图是空的，请点旁边的文字链接**——
+> 那些链接直连 jsDelivr，国内可以正常打开。
+
+**▶ [观看 80 秒真机演示（mp4 · 6.4 MB）](https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/demo_80s.mp4)**
 
 <p align="center">
   <a href="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/demo_80s.mp4">
     <img src="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/front_camera.png" width="72%"/>
-  </a><br/>
-  <sub>点击画面观看 80 秒真机演示（mp4 · 6.4 MB）</sub>
+  </a>
 </p>
-
-> **图片加载**：README 里的图和视频走 jsDelivr CDN。如果你在中国大陆，GitHub 默认的
-> `raw.githubusercontent.com` / `camo.githubusercontent.com` 经常加载不出来，那不是文件缺失。
 
 ---
 
@@ -38,26 +30,26 @@
   <tr>
     <td align="center" width="50%">
       <img src="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip1.gif" width="100%"/><br/>
-      <sub>clip 1 · 0:08</sub>
+      <sub>clip 1 · 0:08 · <a href="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip1.gif">打开</a></sub>
     </td>
     <td align="center" width="50%">
       <img src="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip2.gif" width="100%"/><br/>
-      <sub>clip 2 · 0:26</sub>
+      <sub>clip 2 · 0:26 · <a href="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip2.gif">打开</a></sub>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip3.gif" width="100%"/><br/>
-      <sub>clip 3 · 0:34</sub>
+      <sub>clip 3 · 0:34 · <a href="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip3.gif">打开</a></sub>
     </td>
     <td align="center">
       <img src="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip4.gif" width="100%"/><br/>
-      <sub>clip 4 · 0:50</sub>
+      <sub>clip 4 · 0:50 · <a href="https://cdn.jsdelivr.net/gh/Morantkk/SO101-GR00T@main/media/clip4.gif">打开</a></sub>
     </td>
   </tr>
 </table>
 
-四个片段是从 80 秒录像里按画面变化量截取的，时间段标注的是原始录像的时间点。
+四个片段是从同一段 80 秒录像里按画面变化量截取的（每段 8 秒），标注的是原始录像的时间点。
 
 | | **v1 · 抓单支笔** | **v3 · 桌面全物体** |
 |---|---|---|
