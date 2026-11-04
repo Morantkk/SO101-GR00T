@@ -274,6 +274,30 @@ scripts/
 
 ---
 
+## 数据集
+
+两份原始采集数据都已开源到 Hugging Face（LeRobot v3.0 格式，可直接用 `LeRobotDataset` 加载）：
+
+| 数据集 | 内容 | 规模 | 大小 |
+|---|---|---|---|
+| [so101-pick-one-pen](https://huggingface.co/datasets/FAKUN/so101-pick-one-pen) | 抓单支笔放进盒子 | 50 集 / 17,789 帧 | 375 MB |
+| [so101-pick-all-objects](https://huggingface.co/datasets/FAKUN/so101-pick-all-objects) | 整理桌面多件物品 | 102 集 / 59,314 帧 | 1.4 GB |
+
+两份都是**原始采集数据**（15 fps，双相机，6 维关节角）。拿去训练 GR00T 之前还要裁掉每集开头的静止段、
+转成逐 episode 格式、统一相机分辨率——见 [docs/03_DATA_PIPELINE.md](docs/03_DATA_PIPELINE.md)。
+
+```python
+from lerobot.datasets.lerobot_dataset import LeRobotDataset
+ds = LeRobotDataset("FAKUN/so101-pick-one-pen")
+print(len(ds), ds.meta.fps)
+```
+
+> ⚠️ 自己裁剪时，**务必同步重写 `timestamp` 列**。GR00T 取帧是按时间戳查表的，
+> 只裁视频和 parquet 行而不重写时间戳，训练时每帧图像都会超前关节状态数秒，
+> 而且 loss、回放、单步误差全都看不出来，只在真机上崩。
+
+---
+
 ## 模型权重
 
 | 模型 | 说明 | 下载 |
