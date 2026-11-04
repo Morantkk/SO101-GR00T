@@ -241,11 +241,18 @@ def main() -> int:
         sys.exit("✗ 需要 huggingface_hub：pip install -U huggingface_hub")
 
     api = HfApi()
-    try:
-        who = api.whoami()
-    except Exception as e:  # noqa: BLE001
-        sys.exit("✗ 未登录（%s）。先运行：hf auth login" % e)
-    print("\n登录身份: %s" % who.get("name"))
+    # whoami 只是探活；跨境链路会偶发 10054（连接被重置）。
+    # 探活失败不应该中断发布 —— 真正的鉴权发生在 create_repo / upload。
+    who = None
+    for attempt in range(1, 4):
+        try:
+            who = api.whoami()
+            break
+        except Exception as e:  # noqa: BLE001
+            print("whoami 第 %d 次失败（%s），%.0fs 后重试" % (attempt, type(e).__name__, attempt * 3))
+            import time as _t
+            _t.sleep(attempt * 3)
+    print("\n登录身份: %s" % (who.get("name") if who else "（探活失败，继续尝试上传）"))
 
     api.create_repo(repo_id=o.repo, repo_type="model", exist_ok=True, private=o.private)
     print("仓库就绪: https://huggingface.co/%s" % o.repo)
